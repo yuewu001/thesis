@@ -1,0 +1,150 @@
+﻿\begin{abstract}
+近几年来，智能手机及其他智能移动设备呈现出了爆发式的增长与普及。
+高清摄像头，大容量存储，和高速的网络连接为用户创造了极其便利的拍摄和分享条件。
+用户几乎可以在任何时间任何地点拍摄图片或者视频，
+并将它们分享到社交网络或存储到云端服务器，产生了海量的社交多媒体数据。
+然而这些数据都以碎片化的形式存在于社交媒体上，缺乏智能的工具或服务
+将他们组织起来，并根据用户需求选取并呈现给用户，
+用户也很难快速准确地搜索到他们需要的数据。
+因此，如何充分挖掘并有效利用社交多媒体数据成为了当前重要的研究问题。
+
+本论文对社交多媒体数据的语义理解和关联表达做了深入的研究，目标是实现一个能够理解社交
+多媒体数据，并根据用户需求选取有关联的数据，以丰富的表达形式呈现给用户的系统。
+由于社交多媒体数据的语义概念丰富多样，无法对每个语义收集数据并标注，
+语义理解首先需要解决标注难的问题。 其次，由于社交多媒体数据的规模庞大，
+语义理解需要解决处理慢的问题。
+社交多媒体数据关联表达是基于对社交多媒体数据语义理解的结果，
+根据用户个性化的需求选取有关联的数据，并以丰富的表达形式呈现给用户。
+本文分别从图片和视频的角度，研究了关联表达的具体应用。
+语义理解和关联表达构成了挖掘和利用社交多媒体数据相对完整的框架。
+本文对相关的问题做了深入研究，取得了以下成果：
+
+\begin{enumerate}[{(1)}]
+    \item 对于语义理解标注难的问题，提出一种弱监督深度相关反馈学习算法，
+        直接从弱标注的社交多媒体数据中学习语义理解模型。
+        传统深度学习算法对于训练数据中的标注噪音十分敏感，
+        本论文基于感知连续性，利用数据在特征空间上的关系，
+        使得不同的训练数据在训练过程中有不同的贡献加权， 从而抑制噪音标注的影响。
+        为了加速模型训练的速度，进一步对相关反馈网络进行了简化和近似，
+        降低了模型训练的复杂度。与已有算法相比，
+        本文提出的相关反馈神经网络具有更好的噪声鲁棒性。
+    \item 对于语义理解处理慢的问题，提出了一种从大规模高维数据中选取特征的高效算法。
+        利用二阶在线学习算法，基于特征的置信度进行特征选择，并利用最大最小堆的结构提出了快速
+        特征选取算法。由于训练过程中置信度的单调递特性，进一步提出了快速二阶在线特征选取算法，
+        将算法的复杂度降低为于非零特征数目成正比。相比于已有算法，算法的时间开销减小了几倍至几十倍。
+    \item 简化深度模型， 基于二阶特征选择算法提出了基于在线特征选取的深度神经网络模型简化算法。算法
+        对卷积层输出的每个通道的神经元增加了权重层，在权重层上进行特征选取，从而将
+        三维的卷积核组稀疏优化问题转化为一维特征选取问题。
+        利用二阶在线特征选取算法，在不损失模型准确率的情况下极大地减少了模型的参数。
+    \item 对于图片关联表达问题， 提出了一个基于主题的个人照片集故事化关联表达系统——Monet。
+        系统首先根据照片的时间和位置信息对照片集进行事件检测。
+        其次，根据照片的质量，多样性和事件的均衡性选取一部分代表性的图片。
+        然后，利用弱监督的深度学习算法对代表性照片进行内容分析，
+        并利用在线特征选取算法选取最能鉴别照片语义的特征子集。
+        系统设计了17个主题风格，利用照片特征对照片赋予不同的主题。
+        最后，通过不同主题风格的可计算的视频编辑语法，
+        对照片进行动画特效处理以及音乐的匹配，
+        最终生成具有关联表达能力的视频呈现给用户。
+    \item 对于视频关联表达问题，
+        提出了全自动的移动多摄像头视频自动剪辑系统——MoVieUp。
+        我们邀请了专业的视频编辑人员探讨可计算的视频编辑语法。
+        自动剪辑系统首先对音频流进行质量评估，
+        在最少切换次数下选取高质量的音频流，拼接成单一音频流。
+        对于视频流，首先将多摄像头视频进行语义分割，得到视频子镜头，
+        其次对这些子镜头的视觉质量，运动，以及相互之间的多样性进行评估，
+        最终在保证镜头运动一致性的前提下，最大化质量和多样性，选取视频镜头。
+        对于镜头切换时机的选取，则根据音频的节奏以及语义特性，对切换频率进行匹配。
+        系统最后将单一的音频流和单一的视频流进行混流，得到最终剪辑好的视频呈现给用户。
+\end{enumerate}
+
+\keywords{社交多媒体数据\zhspace{} 语义理解\zhspace{} 弱监督深度学习\zhspace{}
+    特征选取\zhspace{} 模型简化\zhspace{} 关联表达\zhspace{} 照片集编辑\zhspace{} 视频自动剪辑}
+\end{abstract}
+
+\begin{enabstract}
+    Recent years have witnessed the explosive growth and popularity of mobile
+    devices. The high resolution cameras， large storage， and fast
+    network connection of mobile devices have founded the superior
+    conditions for capturing and sharing. Users can capture photos or videos
+    and share them to social networks or clouds at almost anytime and anywhere.
+    Up to now， the amount of social media data has increased to a huge scale.
+    However， these data exist in a fragmented way on social media， lacking intelligent
+    services to organize them. Neither can social media provide data according
+    to personalized user needs， nor can users search for the required data efficiently
+    and effectively. As a result， how to exploit and utilize the
+    large scale social media data has become an important problem.
+
+    This thesis probes into the semantic understanding and associative
+    expression of social media data. The aim is to implement an intelligent
+    system that can understand， select， and show social media data
+    in an expressive way. Due to the wide range of semantics， it's hard to
+    collect and label data for every semantic tag. Semantic understanding
+    should solve the difficulty of labelling. Besides， it needs to accelerate
+    the processing speed due to the large data scale. Based on the semantic understanding，
+    associative expression selects and shows social media data in an expressive
+    way according to personalized user needs. We studies associative
+    expression from photo and video aspects. Semantic understanding and
+    associative expression compose a relatively complete framework for mining
+    and utilizing social media data. This thesis conducts a deep research
+    on the related problems with the following achievements:
+
+
+    \begin{enumerate}[{(1)}]
+        \item For the difficulty of labelling， we propose a weakly supervised
+            deep learning algorithm with relevance feedback to learn
+            from the weakly labelled social media data directly.
+            Traditional deep learning algorithms
+            are sensitive to the label noises in training data. Our algorithm
+            is based on the perceptual consistency to attenuate the
+            sensitiveness. It utilizes the correlation in the feature space
+            so that different training samples contribute differently. To speed
+            up training， we further simplifies the algorithm to reduce the
+            training complexity. Compared to existing algorithms， our relevance
+            feedback algorithm shows  better robustness to label noises.
+        \item For the processing speed， we propose a large scale high
+            dimensional second-order online feature selection algorithm. Based on
+            the second-order online learning algorithms， we select features
+            according to the confidence of features. We propose fast algorithms
+            with the Max/Min heap. Due to the monotonous increasing property of
+            confidence， we further propose the fast second-order online feature
+            selection algorithm which reduces the complexity to be linear to the
+            number of non-zero features. Compared to existing algorithms， the
+            training time cost is less by orders of magnitude.
+        \item For model simplification， we propose an online deep model
+            simplification algorithm based on online feature selection.
+            The algorithm adds a new weighting layer for each channel of the
+            output feature maps of the convolutional layer. As a result，
+            the traditional group sparsity problem on the 3D convolutional kernels
+            is transformed into the feature selection problem on a 1D weighting
+            vector.  Levering the second-order online feature selection algorithm，
+            model parameters are reduced significantly with little impact on accuracy.
+        \item For associative photo expression， we propose a theme-based
+            personal photo storytelling system---Monet. First， the system
+            detects events in personal photos according to the time and
+            location information. It then selects a representative photo subset
+            according to photo quality， diversity， and balance of events. After
+            that， we use the weakly supervised relevance feedback algorithm to
+            analyze the content of the representative photos. Online feature
+            selection algorithm is applied to extract the most distinctive features.
+            With these features， each photo is assigned to one of the 17 theme
+            styles designed for the system. Finally， a fancy video with
+            animation and motion effects is generated and aligned with a music
+            according to the computational filming grammars of each theme style.
+        \item For associative video expression， we propose an automatic mobile
+            multi-camera video mashup system---MoVieUp. We invites
+            professional video editors to exploit computational filming
+            grammars. First， the system assesses quality of the audio streams.
+            Under the less switching principle， it selects high quality audio
+            segments and stitches them into a single audio stream. For video
+            streams， they are first segmented into subshots. The system then
+            evaluates the quality， motion， and diversity of the subshots.
+            To select video shots， we maximize the quality and diversity under
+            the condition of motion consistency. The switching points of
+            video shots are detected according to the tempo and semantics of
+            audio. Finally， the system multiplexes the audio and video streams to
+            generate the well-edited video.
+    \end{enumerate}
+
+    \enkeywords{Social Media Data， Semantic Understanding， Weakly Supervised Deep Learning， Model
+    Simplification， Feature Selection， Associative Expression， Photo Storytelling，  Video Mashup}
+\end{enabstract}

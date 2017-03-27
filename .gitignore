@@ -1,0 +1,16 @@
+*.bak
+*.bbl
+*.aux
+*.out
+*.blg
+*.log
+*.toc
+*.dvi
+*.spl
+*.synctex
+*.synctex.gz
+*.synctex.gz(busy)
+*.lot
+*.lof
+*.loa
+*.yml
