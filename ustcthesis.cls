@@ -256,7 +256,7 @@
         \vpostext{8.2cm}{\includegraphics[height=5cm]{figures/ustc_logo_fig}}%
         \vpostext{16cm}{\sffamily\bfseries\setfontsize{26bp}[30bp]\ustc@entitle}%
         \tikz[remember picture,overlay]%
-            \node [xshift=6cm,yshift=5cm] at (current page.south west)%
+            \node [xshift=4cm,yshift=5cm] at (current page.south west)%
             [above right,align=left] {%
                 \setfontsize{16bp}[30bp]%
                 \begin{tabular}{@{}lc@{}}%

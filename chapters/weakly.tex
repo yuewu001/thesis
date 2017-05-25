@@ -253,11 +253,43 @@ $\y_i\in\{0,1\}^{K\times
 
 \subsection{相关反馈分析}
 为了验证上述方法有效性，我们从梯度的角度分析相关反馈对于噪声的抑制能力。
-定义第$M-1$层特征之间的距离为：
+定义第$M$层特征之间的距离为：
+\begin{eqnarray}
+    \Delta(\x_i, \x_j) = \|\z^M(\x_i) - \z^M(\x_j)\|^2
+\end{eqnarray}
+当$y_i$与$y_j$相同时，$\x_i$和$\x_j$之间的距离$S_{ij}$表示为：
+\begin{eqnarray}
+    S_{ji}
+    = \exp\{-\frac{\|\z^M(\x_j) - \z^M(\x_i)\|^2}{\gamma^2}\}
+    = \exp\{-\frac{\Delta(\x_j, \x_i)}{\gamma^2}\}
+\end{eqnarray}
+$S_{ij}$相对于输入$\z^M(\x_i)$的梯度为：
+\begin{eqnarray}
+    \frac{\partial S_{ij}}{\partial \z^M(\x_i)} =
+    \frac{\partial S_{ij}}{\partial \Delta(\x_i, \x_j)}
+    \frac{\partial \Delta(\x_i, \x_j)}{\partial \z^M(\x_i)} =
+    \frac{2S_{ij}}{\gamma^2}(\z^M(\x_i) - \z^M(\x_j))
+\end{eqnarray}
+定义$G=HH^T$，目标方程~\eqref{eqn:rf-cnn-obj}中的相关反馈项对于特征$\z^M(\x_i)$的梯度为：
+\begin{eqnarray*}
+    \frac{\partial tr(H^TLH)}{\partial \z^M(\x_i)} &=&
+    \frac{\partial tr(HH^TL)}{\partial \z^M(\x_i)} =
+    \frac{\partial tr(GL)}{\partial \z^M(\x_i)}
+    =\frac{\sum_{k=1}^N\sum_{j=1}^N{G_{kj}\partial L_{jk}}}{\partial \z^M(\x_i)} \\
+    &=&\frac{\sum_{k=1}^N\sum_{j=1}^N{(G_{kk} - G_{kj})\partial S_{kj}}}{\partial \z^M(\x_i)}  \\ 
+    &=&\frac{2\sum_{k=1}^N\sum_{j=k+1}^N{(G_{kk} - G_{kj})\partial S_{kj}}}{\partial \z^M(\x_i)}  \\ 
+    &=&\sum_{j=i+1}^N{(G_{ii} - G_{ij})}\frac{2\partial S_{ij}}{\partial \z^M(\x_i)}  \\ 
+    &=&\sum_{j=i+1}^N{(G_{ii} - G_{ij})\frac{4S_{ij}}{\gamma^2}(\z^M(\x_i) - \z^M(\x_j))}  \\ 
+    \|\frac{\partial tr(H^TLH)}{\partial \z^M(\x_i)}\|^2 &\propto&
+    g(\Delta(\x_i, \x_j)) = \Delta(\x_i, \x_j)(\exp\{-\frac{\Delta(\x_i, \x_j)}{\gamma^2}\})^2
+\end{eqnarray*}
 
-TBD.
+图片$\x_i$对于梯度的贡献如图~\ref{fig:rf-cnn-gradient}所示的单峰函数。
+在峰值的右边，随着$\x_i$和$\x_j$之间距离的增大，反馈的梯度逐渐减小至0，意味着
+当同一类的样本直接距离过大时，相关反馈的作用较小。在峰值的左边，随着距离减小，
+反馈的梯度也减小，距离为0时梯度也为0。这是因为深度学习需要多样化的训练样本，
+距离为0意味着两个训练数据完全相同，反馈的梯度也应该为0。
 
-图片$\x_i$对于梯度的贡献如图~\ref{fig:rf-cnn-gradient}所示。
 \begin{figure}[ht]
     \center
     \includegraphics[clip=true, width=0.55\textwidth]{rf-cnn-gradient}
@@ -413,7 +445,64 @@ $15.9\%$。CAE+CNN虽然能够解决区域级的噪声（背景噪声），但�
 \end{tabular}
 \end{table}
 
+\subsection{社交图片标注}
+本章提出的相关反馈弱监督深度学习网路可以利用大量的社交图片作为训练数据，
+用于任意类别的社交图片标注。例如，社交图片中广泛存在的``风景''，``家庭''标签并没有
+相应的标注好的训练数据。
+
+我们根据Flickr\footnote{\url{https://www.flickr.com/}}上$100,000$名活跃用户（注册
+超过2年并在过去6个月上传超过500张找盘）提供的标签中选取了200个常见标签。其中50个标签例如
+''日落''，''观光''，''生日''等没有在ImageNet数据集中出现。实验中的基准方法采用了ImageNet数据集。
+对于这200个标签，我们仅用ImageNet数据集提供的每类$1,000$张图片作为训练数据训练模型，该方法称为\textbf{CNN(ImageNet)}。
+此外，我们还采用了视觉语义嵌套方法DeViSE~\cite{frome2013devise}，在150个已有训练数据类别上
+训练视觉语义嵌套模型，从而对200个类别进行标注。
+对于我们的方法，为了获得完整的200个类别的数据，我们从搜索引擎上为每个类别抓取$1,000$张图片，
+移除重复图片并训练模型。网络模型与VOC2007实验中相同。
+
+为了测试不同算法的性能，我们从\textbf{MIT-Adobe FiveK}数据集~\cite{fivek}中随即选取了
+$1,000$张图片作为测试集。每种方法根据预测的分数为每张图生成5个有序标签。我们邀请了25位
+标注人员为每个标签打分：2——非常相关；1——相关；0——不相关。我们采用归一化折扣增益值(NDCG)
+作为评价指标。NDCG可以评价不同级别的相关性，相关结果越靠前得到的评分越高。有序结果中
+位置$p$的NDCG定义为：
+\begin{eqnarray}
+    \text{NDCG}@p = Z_p \sum_{i=1}^p \frac{2^{r^i} - 1}{\log{(1+i)}}
+\end{eqnarray}
+其中$2^{r^i}$是第$i$个标签的相关性评价，$Z_p$是归一化参数。
+
+表格~\ref{tab:rl-social-tagging-comp}显示了相关性评价结果。相比与其他噪音鲁棒算法，
+本章提出的方法获得了最好的效果。此外，CNN(ImageNet)数据集由于训练的标注空间较小，
+效果较差，从而证明了利用社交图片的有效性。
+本章算法的效果也比视觉语义嵌套方法DeViSE要好。
+\begin{table}[htbp]
+\centering
+\caption{社交图片标注结果比较} \label{tab:rl-social-tagging-comp}
+\footnotesize
+\tabcolsep=0.3mm
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+    \hline
+    & CNN(Web) & RPCA+CNN(Web) & CAE+CNN(Web) & NL+CNN(Web) & CNN(ImageNet) &
+    DeViSE(ImageNet) & RFCNN(Web)\\
+    \hline
+    NDCG@1 & 0.08 & 0.23 & 0.11 & 0.24 & 0.20 & 0.28 & \textbf{0.32}\\
+    \hline
+    NDCG@3 & 0.18 & 0.32 & 0.25 & 0.33 & 0.29 & 0.36 & \textbf{0.41}\\
+    \hline
+    NDCG@5 & 0.26 & 0.39 & 0.34 & 0.41 & 0.39 & 0.43 & \textbf{0.46}\\
+    \hline
+\end{tabular}
+\end{table}
+
 \section{小结}
+本章提出了相关反馈弱监督深度学习网络，从大量的弱标注社交图片中学习物体识别模型。
+算法可以在不需要人工标注的情况下快速学习任意的语义类别。算法利用了训练数据在之间的
+相关性使得不同的训练数据在网络训练时有不同的梯度贡献。为了提高算法的效率，本文对
+相关反馈弱监督神经网络进行了进一步的近似和简化。本章在标注数据集上混入噪声以及真实
+的社交图片上验证算法的有效性。
 
-
-
+本章的主要贡献包括：
+\begin{itemize}
+    \item 利用语义连续性提出了端到端的相关反馈弱监督神经网络，
+        从社交图片中学习任意语义类别。
+    \item 对相关反馈网路进行了简化近似，提高了算法的计算速度。
+    \item 本文提出的相关反馈弱监督神经网络不依赖特定的网络结构。
+\end{itemize}
